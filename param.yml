@@ -1,0 +1,10 @@
+# Path to Obsidian Volt with dayly notes
+obsidian: "/Users/thierrycrouzet/Library/Mobile Documents/iCloud~md~obsidian/Documents/Online/Daily/"
+
+# Mastodon
+masdodon_instance: "https://mamot.fr"
+mastodon_token: '' 
+masto_user: 0 # Your masto ID
+
+# Newsletters history
+news_json: '_news.json'
