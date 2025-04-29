@@ -3,8 +3,12 @@ import os
 import markdown
 from papers import Bookmarks
 
+import tools
+
+config = tools.site_yml('_param.yml')
+
 os.system('clear')
-book = Bookmarks()
+book = Bookmarks(config)
 
 app = Flask(__name__)
 
@@ -66,7 +70,7 @@ def load_bookmarks_from_markdown():
     return bookmarks
 
 bookmarks = load_bookmarks_from_markdown()
-print("Bookmarks chargés avec succès depuis les fichiers Markdown")
+print("Ouvrez http://127.0.0.1:5000/ dans votre navigateur.")
 
 @app.route('/')
 def index():
