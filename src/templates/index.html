@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+    <title>Bookmarks</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-columns {
+            column-count: 3;
+        }
+        .card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Bookmarks</h1>
+        <div id="bookmark-list" class="card-columns">
+            <!-- Les bookmarks seront ajoutés ici par JavaScript -->
+        </div>
+        <div id="loading" style="display: none;">Loading...</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let page = 1;
+        const perPage = 50;
+        const bookmarkList = document.getElementById('bookmark-list');
+        const loading = document.getElementById('loading');
+
+        async function loadBookmarks() {
+            loading.style.display = 'block';
+            const response = await fetch(`/api/bookmarks?page=${page}`);
+            const bookmarks = await response.json();
+            loading.style.display = 'none';
+
+            bookmarks.forEach(bookmark => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${bookmark.image}" class="card-img-top" alt="${bookmark.title}">
+                    <div class="card-body">
+                        <h5 class="card-title">${bookmark.title}</h5>
+                        <p class="card-text"><a href="${bookmark.link}" target="_blank">Source</a> | <a href="article/${bookmark.id}">Sauvegarde</a></p>
+                    </div>
+                `;
+                bookmarkList.appendChild(card);
+            });
+
+            if (bookmarks.length === perPage) {
+                page += 1;
+                observer.observe(document.querySelector('.card:last-child'));
+            }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries.some(entry => entry.isIntersecting)) {
+                observer.disconnect();
+                loadBookmarks();
+            }
+        }, {
+            rootMargin: '100px',
+        });
+
+        loadBookmarks();
+    </script>
+</body>
+</html>
