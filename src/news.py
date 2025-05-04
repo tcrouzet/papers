@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 from masto  import Masto
 from papers import Bookmarks
+import articles
 import tools
 
 os.system('clear')
@@ -48,7 +49,7 @@ for post in posts_m:
     if not os.path.exists(filepath):
         if "crouzet" in post['url']:
             continue
-        article = bookmarks.get_article_from_source(post['url'])
+        article = articles.get_article_from_source(post['url'])
         if post['source'] == 'crouzet':
             comments = post['title']
             source = "mastodon"
