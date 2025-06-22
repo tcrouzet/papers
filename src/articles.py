@@ -23,22 +23,24 @@ def get_article_from_source(url, mode=1, max_retries=4):
         article = Article(url)
         
         # Différentes empreintes de navigateur à essayer
-        if mode == 1:
+        if mode == 2:
+            print(f"Get Article try {mode}")
             article.config.headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Language': '*',
+                'Accept-Encoding': 'gzip;q=1.0, deflate;q=0.9, br;q=0.8, identity;q=0.7, *;q=0.1',
                 'DNT': '1',
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
             }
-        elif mode == 2:
+        elif mode == 1:
             print(f"Get Article try {mode}")
             article.config.headers = {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': '*',
+                'Accept-Encoding': 'gzip;q=1.0, deflate;q=0.9, br;q=0.8, identity;q=0.7, *;q=0.1',
                 'DNT': '1',
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
@@ -53,8 +55,8 @@ def get_article_from_source(url, mode=1, max_retries=4):
             article.config.headers = {
                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'fr-FR,fr;q=0.9',
-                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': '*',
+                'Accept-Encoding': 'gzip;q=1.0, deflate;q=0.9, br;q=0.8, identity;q=0.7, *;q=0.1',
                 'Referer': 'https://www.google.com/',
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
@@ -69,8 +71,8 @@ def get_article_from_source(url, mode=1, max_retries=4):
             article.config.headers = {
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-GB,en;q=0.9,es-ES;q=0.8,es;q=0.7',
-                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': '*',
+                'Accept-Encoding': 'gzip;q=1.0, deflate;q=0.9, br;q=0.8, identity;q=0.7, *;q=0.1',
                 'Referer': 'https://www.bing.com/',
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
@@ -138,6 +140,8 @@ def get_article_with_selenium(url):
     ou des protections anti-scraping plus fortes
     """
     try:
+        
+        print(f"Selenium: {url}")
         
         # Configurer le navigateur headless
         options = Options()

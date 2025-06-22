@@ -65,7 +65,7 @@ class Masto:
         for a in soup.find_all('a', href=True):
             href = a['href']
 
-            if "tcrouzet.com" in href or "tcrouzet.substack.com" in href:
+            if "tcrouzet" in href:
                 return None, None
 
             # Exclude links that are mentions (contain '/@')

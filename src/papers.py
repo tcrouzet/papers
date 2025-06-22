@@ -200,8 +200,10 @@ class Bookmarks:
         """ Parcours tous les fichiers MD dans sources_dir """
         url_pattern = re.compile(r'http[s]?://\S+')
 
-        for root, dirs, files in os.walk(self.sources_dir):
-            for file in files:
+        for file in os.listdir(self.sources_dir):
+            file_path = os.path.join(self.sources_dir, file)
+
+            if os.path.isfile(file_path):
 
                 created = self.get_bookmark_created(file)
                 if not created:
@@ -229,6 +231,7 @@ class Bookmarks:
                     self.save_bookmark(article, file_save, url, created, com)
                     urls_index += 1
 
+
     def get_content(self,content):
         article_content = ""
         content_parts = content.split('---', 2)
@@ -255,12 +258,15 @@ class Bookmarks:
     def get_bookmarks(self, start_date, end_date):
         """Retourne les bookmarks entre deux dates avec titre et URL."""
         bookmarks = []
-        for root, dirs, files in os.walk(self.sources_dir):
-            sorted_files = sorted(files, reverse=True)
-            for file in sorted_files:
 
-                if file.startswith("."):
-                    continue
+        files = os.listdir(self.sources_dir)
+        sorted_files = sorted(files, reverse=True)
+
+        # Puis itérer sur la liste triée
+        for file in sorted_files:
+
+            file_path = os.path.join(self.sources_dir, file)
+            if os.path.isfile(file_path):
 
                 content = self.read_markdown(file)
                 if not content:
@@ -289,6 +295,7 @@ class Bookmarks:
                         'comment': yaml_header.get('comment', "").strip(),
                         'text': self.get_content(content)
                     })
+
         return bookmarks
 
     #Once a time
