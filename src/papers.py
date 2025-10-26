@@ -253,7 +253,7 @@ class Bookmarks:
                 article_content = '\n'.join(lines[title_index+1:]).strip()
 
         return article_content
-
+    
     
     def get_bookmarks(self, start_date, end_date):
         """Retourne les bookmarks entre deux dates avec titre et URL."""
@@ -314,11 +314,11 @@ if __name__ == '__main__':
     config = tools.site_yml('_param.yml')
 
     bookmarks = Bookmarks(config)
+    print("Bookmarks dir:", bookmarks.sources_dir)
 
     if False:
         # Test Get Article
-        test_url ="https://www.techrepublic.com/article/news-prompt-engineering-ai-jobs-obsolete/?utm_source=flipboard&utm_content=user/TechRepublic"
+        test_url ="https://www.joanwestenberg.com/p/why-stories-make-you-smarter-than-self-help-books?utm_source=flipboard&utm_content=other"
         # print( articles.get_article(test_url))
-        print( bookmarks.get_article_from_source(test_url) )
     else:
         bookmarks.get_new_bookmarks()
