@@ -38,25 +38,26 @@ bookmarks = Bookmarks(config)
 bookmarks.get_new_bookmarks()
 
 # Get bookmarks from Masotodon
-masto = Masto(config)
-posts_m = masto.get_posts( config['masto_user'], latest_date, end_date)
+if True:
+    masto = Masto(config)
+    posts_m = masto.get_posts( config['masto_user'], latest_date, end_date)
 
-for post in posts_m:
-    post_datetime = datetime.fromisoformat(post['date'])
-    filename = post_datetime.strftime("%Y-%m-%d-%H%M") + "-masto.md"
-    filepath = bookmarks.file_path(filename)
+    for post in posts_m:
+        post_datetime = datetime.fromisoformat(post['date'])
+        filename = post_datetime.strftime("%Y-%m-%d-%H%M") + "-masto.md"
+        filepath = bookmarks.file_path(filename)
 
-    if not os.path.exists(filepath):
-        if "crouzet" in post['url']:
-            continue
-        article = articles.get_article_from_source(post['url'])
-        if post['source'] == 'crouzet':
-            comments = post['title']
-            source = "mastodon"
-        else:
-            comments = ""
-            source = post['source']
-        bookmarks.save_bookmark(article, filename, post['url'], post_datetime, comments.strip(), source)
+        if not os.path.exists(filepath):
+            if "crouzet" in post['url']:
+                continue
+            article = articles.get_article_from_source(post['url'])
+            if post['source'] == 'crouzet':
+                comments = post['title']
+                source = "mastodon"
+            else:
+                comments = ""
+                source = post['source']
+            bookmarks.save_bookmark(article, filename, post['url'], post_datetime, comments.strip(), source)
 
  
 posts_b = bookmarks.get_bookmarks(latest_date, end_date)
