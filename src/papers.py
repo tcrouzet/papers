@@ -43,7 +43,7 @@ class Bookmarks:
             return urls[0]  # Retourne le premier URL trouvé
         return None
     
-    def get_bookmark_created(self, file):
+    def get_bookmark_created_old(self, file):
         """ Retourne date de bookmark en utilisant dateutil.parser pour plus de flexibilité """
         if file.endswith('.md'):
             try:
@@ -75,6 +75,29 @@ class Bookmarks:
                 print(f"Erreur de parsing de date pour {file}: {e}")
                 exit()
         return None
+
+    def get_bookmark_created(self, file_path):
+        """Retourne la date de création du fichier"""
+        try:
+            # Récupère les stats du fichier
+            file_stat = os.stat(file_path)
+            
+            # Sur macOS, utiliser st_birthtime (date de création réelle)
+            # Sur Linux, st_ctime est le change time, pas la création
+            if hasattr(file_stat, 'st_birthtime'):
+                # macOS
+                creation_time = file_stat.st_birthtime
+            else:
+                # Fallback pour Linux/autres systèmes
+                creation_time = file_stat.st_ctime
+            
+            # Convertit timestamp en datetime
+            dt = datetime.fromtimestamp(creation_time, tz=timezone.utc)
+            return dt
+            
+        except Exception as e:
+            print(f"Erreur de lecture de date pour {file_path}: {e}")
+            return None
 
     def has_yaml_header(self, content):
         # Diviser le contenu en lignes
@@ -173,21 +196,17 @@ class Bookmarks:
 
     def extract_comment_from_content(self, content):
         """
-        Extrait le texte de commentaire du contenu.
-        Le commentaire est tout le texte qui n'est pas une URL.
-        Suppose qu'il n'y a qu'un seul bloc de commentaire par fichier.
-        Nettoie les sauts de ligne et les espaces superflus.
+        Extrait uniquement les commentaires purs (texte sans lien).
+        Retire les liens markdown [texte](url) et les URLs brutes.
+        Garde seulement le texte libre entré par l'utilisateur.
         """
-        # Identifie toutes les URLs dans le contenu
-        url_pattern = re.compile(r'https?://\S+')
-        urls = url_pattern.findall(content)
+        # Retire les liens markdown complets [texte](url)
+        comment_text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', '', content)
         
-        # Retire toutes les URLs du contenu
-        comment_text = content
-        for url in urls:
-            comment_text = comment_text.replace(url, '')
+        # Retire les URLs brutes
+        comment_text = re.sub(r'https?://[^\s)]+', '', comment_text)
         
-        # Remplace d'abord les sauts de ligne par des espaces
+        # Remplace les sauts de ligne par des espaces
         comment_text = comment_text.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
         
         # Nettoie les espaces multiples et les espaces en début/fin de chaîne
@@ -198,14 +217,14 @@ class Bookmarks:
 
     def get_new_bookmarks(self):
         """ Parcours tous les fichiers MD dans sources_dir """
-        url_pattern = re.compile(r'http[s]?://\S+')
+        url_pattern = re.compile(r'https?://[^\s)]+')
 
         for file in os.listdir(self.sources_dir):
             file_path = os.path.join(self.sources_dir, file)
 
             if os.path.isfile(file_path):
 
-                created = self.get_bookmark_created(file)
+                created = self.get_bookmark_created(file_path)
                 if not created:
                     continue
                 
@@ -281,7 +300,10 @@ class Bookmarks:
                 if yaml_header.get('public','true').lower() == 'false':
                     continue
 
-                publish_date = self.get_bookmark_created(file)
+                publish_date = self.get_bookmark_created(file_path)
+                
+                if not publish_date:
+                    continue
 
                 if start_date <= publish_date <= end_date:
                     # print(start_date, publish_date, end_date, file)
