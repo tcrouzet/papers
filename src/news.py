@@ -88,10 +88,10 @@ for post in posts_b:
     formatted_date = post_date.strftime("%d %B %Y")
     source = post.get('source', '')
 
-    comment = post.get('comment', '').strip()
-    if comment == "None" or comment == "":
-        print("No comment found for post")
-        comment = post.get('text','').strip()
+    # comment = post.get('comment', '').strip()
+    # if comment == "None" or comment == "":
+    #     print("No comment found for post")
+    comment = post.get('text','').strip()
 
     comment = comment.replace("&", "&amp;")
     comment = comment.replace("\n", " ")    
