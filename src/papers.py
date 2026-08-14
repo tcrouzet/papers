@@ -217,7 +217,7 @@ class Bookmarks:
 
     def get_new_bookmarks(self):
         """ Parcours tous les fichiers MD dans sources_dir """
-        url_pattern = re.compile(r'https?://[^\s)]+')
+        url_pattern = re.compile(r'https?://[^\s)>\]]+')
 
         for file in os.listdir(self.sources_dir):
             file_path = os.path.join(self.sources_dir, file)
@@ -238,7 +238,7 @@ class Bookmarks:
                 print(created)
 
                 # Find all URLs
-                urls = url_pattern.findall(content)
+                urls = [url.rstrip(".,;:!'\"") for url in url_pattern.findall(content)]
                 urls_index = 0
                 for url in urls:
                     if urls_index == 0:
@@ -246,6 +246,10 @@ class Bookmarks:
                     else:
                         file_save = file.replace(".md", f"_{urls_index}.md")
                     article = articles.get_article_from_source(url)
+                    if article is None:
+                        print(f"Bookmark conservé après échec: {url}")
+                        urls_index += 1
+                        continue
                     com = self.extract_comment_from_content(content)
                     self.save_bookmark(article, file_save, url, created, com)
                     urls_index += 1

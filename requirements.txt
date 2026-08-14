@@ -3,3 +3,8 @@ newspaper3k
 lxml_html_clean
 flask
 markdown
+requests
+python-dateutil
+selenium
+beautifulsoup4
+cloudscraper
